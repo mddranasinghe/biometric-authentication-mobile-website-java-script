@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biometric Authentication</title>
+</head>
+<body>
+  <h1>Biometric Authentication</h1>
+  <button id="loginButton">Login with Biometrics</button>
+
+  <script>
+    document.getElementById('loginButton').addEventListener('click', function() {
+      if (window.PublicKeyCredential) {
+        // Biometric authentication is supported
+        navigator.credentials.get({ publicKey: { userVerification: 'required' } })
+          .then((credential) => {
+            // Biometric authentication successful
+            // Proceed with logging the user into your application
+            alert('Biometric authentication successful!');
+          })
+          .catch((error) => {
+            // Biometric authentication failed or was cancelled
+            console.error('Biometric authentication error:', error);
+            alert('Biometric authentication failed or was cancelled.');
+          });
+      } else {
+        // Biometric authentication is not supported
+        console.error('Biometric authentication is not supported in this browser.');
+        alert('Biometric authentication is not supported in this browser.');
+      }
+    });
+  </script>
+</body>
+</html>
+
+    
+</body>
+</html>
