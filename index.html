@@ -3,31 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Biometric Authentication</title>
+<title>Fingerprint Authentication</title>
 <script>
   window.onload = async function() {
-    const publicKeyCredential = await navigator.credentials.create({
-      publicKey: {
-        challenge: new Uint8Array(16),
-        rp: {
-          name: "Example Corp"
-        },
-        user: {
-          id: new Uint8Array(16),
-          name: "exampleuser",
-          displayName: "Example User"
-        },
-        pubKeyCredParams: [
-          { type: "public-key", alg: -7 }
-        ]
-      }
-    });
+    try {
+      const publicKeyCredential = await navigator.credentials.get({
+        publicKey: {
+          challenge: new Uint8Array(16),
+          allowCredentials: [{
+            type: "public-key",
+            id: new Uint8Array(16),
+            transports: ["internal"]
+          }]
+        }
+      });
 
-    console.log(publicKeyCredential);
+      console.log(publicKeyCredential);
+    } catch (error) {
+      console.error(error);
+    }
   };
 </script>
 </head>
 <body>
-<h1>Biometric Authentication</h1>
+<h1>Fingerprint Authentication</h1>
 </body>
 </html>
