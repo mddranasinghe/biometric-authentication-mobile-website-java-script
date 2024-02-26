@@ -3,65 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAuthn Biometric Authentication</title>
+    <title>Biometric Authentication</title>
 </head>
 <body>
 
-<h1>WebAuthn Biometric Authentication</h1>
+<h1>Biometric Authentication</h1>
 
 <button id="authButton">Authenticate with Biometrics</button>
 
 <script>
-// JavaScript code to check for WebAuthn support and initiate biometric credential creation
 document.getElementById("authButton").addEventListener("click", function() {
     // Check if the browser supports WebAuthn
     if (window.PublicKeyCredential) {
         // WebAuthn is supported, proceed with creating credentials
-       const options = {
-    publicKey: {
-        rp: {
-            name: "My Awesome App",
-            id: "example.com",
-            icon: "https://example.com/favicon.ico"
-        },
-        user: {
-            name: "user@example.com",
-            displayName: "User",
-            id: new Uint8Array([/* user ID bytes */]),
-            icon: "https://example.com/user.png"
-        },
-        challenge: new Uint8Array([/* challenge bytes */]),
-        pubKeyCredParams: [
-            { type: "public-key", alg: -7 },
-            { type: "public-key", alg: -257 }
-        ],
-        timeout: 60000,
-        excludeCredentials: [],
-        authenticatorSelection: {
-            authenticatorAttachment: "platform",
-            requireResidentKey: false,
-            userVerification: "preferred"
-        },
-        attestation: "direct",
-        extensions: {}
-    }
-};
-
+        const options = {
+            publicKey: {
+                // You can customize the options here, such as relying party, user, etc.
+            }
         };
 
         // Call navigator.credentials.create() to create the credential
         navigator.credentials.create(options)
             .then((credential) => {
-                // Credential creation successful, you can handle the response here
-                console.log("Credential created successfully:", credential);
+                // Credential creation successful, redirect to home page
+                window.location.href = "home.html";
             })
             .catch((error) => {
-                // An error occurred during credential creation
-                console.error("Credential creation failed:", error);
+                // An error occurred during credential creation or user canceled
+                console.error("Biometric authentication failed:", error);
+                alert("Biometric authentication failed. Please try again.");
             });
     } else {
-        // WebAuthn is not supported, fallback to other authentication methods
-        console.log("WebAuthn is not supported. Fallback to other authentication methods.");
+        // WebAuthn is not supported, inform the user
+        alert("Biometric authentication is not supported in this browser.");
     }
 });
 </script>
