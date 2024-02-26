@@ -12,13 +12,26 @@
 <button id="authButton">Authenticate with Biometrics</button>
 
 <script>
+// Function to generate a random challenge for WebAuthn credential creation
+function generateRandomChallenge() {
+    const randomBytes = new Uint8Array(32); // 32 bytes (256 bits) for a standard challenge
+    window.crypto.getRandomValues(randomBytes);
+    return randomBytes;
+}
+
 document.getElementById("authButton").addEventListener("click", function() {
     // Check if the browser supports WebAuthn
     if (window.PublicKeyCredential) {
         // WebAuthn is supported, proceed with creating credentials
         const options = {
             publicKey: {
-                // You can customize the options here, such as relying party, user, etc.
+                challenge: generateRandomChallenge(),
+                pubKeyCredParams: [
+                    { type: "public-key", alg: -7 }, // ES256 algorithm
+                    { type: "public-key", alg: -257 } // RS256 algorithm
+                    // You can add more algorithms as needed
+                ]
+                // Other properties for credential creation...
             }
         };
 
