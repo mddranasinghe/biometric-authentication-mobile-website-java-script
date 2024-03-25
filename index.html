@@ -7,34 +7,37 @@
 </head>
 <body>
     <button id="authenticateButton">Authenticate with WebAuthn</button>
-    <script >
-	
-	
-	document.getElementById('authenticateButton').addEventListener('click', async () => {
-    try {
-        const credentials = await navigator.credentials.get({
-            publicKey: {
-                challenge: new Uint8Array(32), // Generate a random challenge
-                 rpId: 'mddranasinghe.github.io',
-                user: {
-                    id: new Uint8Array(32), // User ID, usually a unique identifier
-                    name: 'test 01', // User name or email
-                    displayName: 'test 01' // User display name
-                },
-                pubKeyCredParams: [{alg: -7, type: 'public-key'}], // Supported public key algorithms
-                timeout: 60000 // Timeout in milliseconds
+    <script>
+        document.getElementById('authenticateButton').addEventListener('click', async () => {
+            try {
+                const credentials = await navigator.credentials.get({
+                    publicKey: {
+                        challenge: new Uint8Array(32), // Generate a random challenge
+                        rpId: 'mddranasinghe.github.io',
+                        user: {
+                            id: new Uint8Array(32), // User ID, usually a unique identifier
+                            name: 'test 01', // User name or email
+                            displayName: 'test 01' // User display name
+                        },
+                        pubKeyCredParams: [
+                            { type: 'public-key', alg: -7 } // Support for fingerprint authentication
+                        ],
+                        authenticatorSelection: {
+                            authenticatorAttachment: 'platform', // Use platform authenticator (e.g., fingerprint reader)
+                            userVerification: 'required' // Require user verification (e.g., fingerprint)
+                        },
+                        timeout: 60000 // Timeout in milliseconds
+                    }
+                });
+
+                // Send the credentials to the server for validation
+                // You'll need to implement server-side logic to validate the credentials
+                // and grant access to the protected resource if authentication is successful
+                console.log(credentials);
+            } catch (error) {
+                console.error('Error during WebAuthn authentication:', error);
             }
         });
-
-        // Send the credentials to the server for validation
-        // You'll need to implement server-side logic to validate the credentials
-        // and grant access to the protected resource if authentication is successful
-        console.log(credentials);
-    } catch (error) {
-        console.error('Error during WebAuthn authentication:', error);
-    }
-});
-
-	</script>
+    </script>
 </body>
 </html>
