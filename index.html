@@ -40,7 +40,7 @@
         });
 
         document.getElementById('authenticateButton').addEventListener('click', async () => {
-           if(credential === 0){
+           if(credential){
             document.getElementById('d').innerHTML=credential;
             try {
                 const publicKeyCredentialRequestOptions = {
