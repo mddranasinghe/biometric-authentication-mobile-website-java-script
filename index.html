@@ -23,7 +23,7 @@
                             { type: 'public-key', alg: -7 } // Support for fingerprint authentication
                         ],
                         authenticatorSelection: {
-                            authenticatorAttachment: 'platform', // Use platform authenticator (e.g., fingerprint reader)
+                            authenticatorAttachment: 'cross-platform', // Use cross-platform authenticator
                             userVerification: 'required' // Require user verification (e.g., fingerprint)
                         },
                         timeout: 60000 // Timeout in milliseconds
