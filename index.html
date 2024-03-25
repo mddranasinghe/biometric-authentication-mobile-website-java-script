@@ -15,7 +15,7 @@
         const credentials = await navigator.credentials.get({
             publicKey: {
                 challenge: new Uint8Array(32), // Generate a random challenge
-                rpId: 'https://mddranasinghe.github.io', // The relying party ID
+                rpId: 'https://mddranasinghe.github.io/biometric-authentication-mobile-website-java-script/', // The relying party ID
                 user: {
                     id: new Uint8Array(32), // User ID, usually a unique identifier
                     name: 'test 01', // User name or email
