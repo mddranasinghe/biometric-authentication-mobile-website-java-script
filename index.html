@@ -3,55 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biometric Authentication</title>
+    <title>WebAuthn Authentication</title>
 </head>
 <body>
-
-<h1>Biometric Authentication</h1>
-
-<button id="authButton">Authenticate with Biometrics</button>
-
-<script>
-// Function to generate a random challenge for WebAuthn credential creation
-function generateRandomChallenge() {
-    const randomBytes = new Uint8Array(32); // 32 bytes (256 bits) for a standard challenge
-    window.crypto.getRandomValues(randomBytes);
-    return randomBytes;
-}
-
-document.getElementById("authButton").addEventListener("click", function() {
-    // Check if the browser supports WebAuthn
-    if (window.PublicKeyCredential) {
-        // WebAuthn is supported, proceed with creating credentials
-        const options = {
+    <button id="authenticateButton">Authenticate with WebAuthn</button>
+    <script >
+	
+	
+	document.getElementById('authenticateButton').addEventListener('click', async () => {
+    try {
+        const credentials = await navigator.credentials.get({
             publicKey: {
-                challenge: generateRandomChallenge(),
-                pubKeyCredParams: [
-                    { type: "public-key", alg: -7 }, // ES256 algorithm
-                    { type: "public-key", alg: -257 } // RS256 algorithm
-                    // You can add more algorithms as needed
-                ]
-                // Other properties for credential creation...
+                challenge: new Uint8Array(32), // Generate a random challenge
+                rpId: 'https://mddranasinghe.github.io', // The relying party ID
+                user: {
+                    id: new Uint8Array(32), // User ID, usually a unique identifier
+                    name: 'test 01', // User name or email
+                    displayName: 'test 01' // User display name
+                },
+                pubKeyCredParams: [{alg: -7, type: 'public-key'}], // Supported public key algorithms
+                timeout: 60000 // Timeout in milliseconds
             }
-        };
+        });
 
-        // Call navigator.credentials.create() to create the credential
-        navigator.credentials.create(options)
-            .then((credential) => {
-                // Credential creation successful, redirect to home page
-                window.location.href = "home.html";
-            })
-            .catch((error) => {
-                // An error occurred during credential creation or user canceled
-                console.error("Biometric authentication failed:", error);
-                alert("Biometric authentication failed. Please try again.");
-            });
-    } else {
-        // WebAuthn is not supported, inform the user
-        alert("Biometric authentication is not supported in this browser.");
+        // Send the credentials to the server for validation
+        // You'll need to implement server-side logic to validate the credentials
+        // and grant access to the protected resource if authentication is successful
+        console.log(credentials);
+    } catch (error) {
+        console.error('Error during WebAuthn authentication:', error);
     }
 });
-</script>
 
+	</script>
 </body>
 </html>
