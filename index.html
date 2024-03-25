@@ -19,13 +19,13 @@
                             name: 'test 01', // User name or email
                             displayName: 'test 01' // User display name
                         },
-                        pubKeyCredParams: [{alg: -7, type: "public-key"}],
-    authenticatorSelection: {
+                         pubKeyCredParams: [{alg: -7, type: "public-key"}],
+                      authenticatorSelection: {
         authenticatorAttachment: "cross-platform",
     },
-    timeout: 60000,
-    attestation: "direct"
-                    
+                        timeout: 60000 // Timeout in milliseconds
+						attestation: "direct"
+                    }
                 });
 
                 // Send the credentials to the server for validation
