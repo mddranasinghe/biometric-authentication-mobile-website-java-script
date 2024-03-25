@@ -14,12 +14,12 @@
                 const publicKeyCredentialCreationOptions = {
                     challenge: new Uint8Array(32), 
                     rp: {
-                        name: 'index.html' 
+                        name: 'mddranasinghe.github.io' 
                     },
                     user: {
                         id: new Uint8Array(32), 
-                        name: 'te 1282', 
-                        displayName: 'Test User' 
+                        name: 'Water Pump', 
+                        displayName: 'Water Pump Controler' 
                     },
                     pubKeyCredParams: [
                         { type: 'public-key', alg: -7 } 
@@ -41,7 +41,7 @@
             try {
                 const publicKeyCredentialRequestOptions = {
                     challenge: new Uint8Array(32), 
-                  rpId: 'index.html', // Relying party ID
+                 // rpId: 'index.html', // Relying party ID
                     userVerification: 'required' // Require user verification (e.g., fingerprint)
                 };
 
