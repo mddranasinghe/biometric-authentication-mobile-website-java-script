@@ -6,13 +6,42 @@
     <title>WebAuthn Authentication</title>
 </head>
 <body>
+    <button id="registerButton">Register Credentials</button>
     <button id="authenticateButton">Authenticate with WebAuthn</button>
     <script>
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            try {
+                const publicKeyCredentialCreationOptions = {
+                    challenge: new Uint8Array(32), // Generate a random challenge
+                    rp: {
+                        name: 'mddranasinghe.github.io' // Relying party name
+                    },
+                    user: {
+                        id: new Uint8Array(32), // User ID, usually a unique identifier
+                        name: 'te 1', // User name or email
+                        displayName: 'Test User' // User display name
+                    },
+                    pubKeyCredParams: [
+                        { type: 'public-key', alg: -7 } // Supported public key algorithms
+                    ],
+                    timeout: 60000 // Timeout in milliseconds
+                };
+
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                console.log('Credential registered:', credential);
+            } catch (error) {
+                console.error('Error during credential registration:', error);
+            }
+        });
+
         document.getElementById('authenticateButton').addEventListener('click', async () => {
             try {
                 const publicKeyCredentialRequestOptions = {
                     challenge: new Uint8Array(32), // Generate a random challenge
-                    rpId: 'mddranasinghe.github.io',
+                    rpId: 'mddranasinghe.github.io', // Relying party ID
                     userVerification: 'required' // Require user verification (e.g., fingerprint)
                 };
 
@@ -20,10 +49,10 @@
                     publicKey: publicKeyCredentialRequestOptions
                 });
 
-                // Send the credentials to the server for validation
-                // You'll need to implement server-side logic to validate the credentials
+                // Send the credential to the server for validation
+                // You'll need to implement server-side logic to validate the credential
                 // and grant access to the protected resource if authentication is successful
-                console.log(credential);
+                console.log('Credential authenticated:', credential);
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
             }
