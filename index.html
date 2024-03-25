@@ -12,19 +12,19 @@
         document.getElementById('registerButton').addEventListener('click', async () => {
             try {
                 const publicKeyCredentialCreationOptions = {
-                    challenge: new Uint8Array(32), // Generate a random challenge
+                    challenge: new Uint8Array(32), 
                     rp: {
-                      //  name: 'mddranasinghe.github.io' // Relying party name
+                        name: 'mddranasinghe.github.io' 
                     },
                     user: {
-                        id: new Uint8Array(32), // User ID, usually a unique identifier
-                        name: 'te 12', // User name or email
-                        displayName: 'Test User' // User display name
+                        id: new Uint8Array(32), 
+                        name: 'te 12', 
+                        displayName: 'Test User' 
                     },
                     pubKeyCredParams: [
-                        { type: 'public-key', alg: -7 } // Supported public key algorithms
+                        { type: 'public-key', alg: -7 } 
                     ],
-                    timeout: 60000 // Timeout in milliseconds
+                    timeout: 60000 
                 };
 
                 const credential = await navigator.credentials.create({
@@ -40,8 +40,8 @@
         document.getElementById('authenticateButton').addEventListener('click', async () => {
             try {
                 const publicKeyCredentialRequestOptions = {
-                    challenge: new Uint8Array(32), // Generate a random challenge
-                  //  rpId: 'mddranasinghe.github.io', // Relying party ID
+                    challenge: new Uint8Array(32), 
+                  rpId: 'mddranasinghe.github.io', // Relying party ID
                     userVerification: 'required' // Require user verification (e.g., fingerprint)
                 };
 
