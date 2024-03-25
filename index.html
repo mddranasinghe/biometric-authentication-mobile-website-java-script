@@ -10,28 +10,34 @@
     <script>
         document.getElementById('authenticateButton').addEventListener('click', async () => {
             try {
-                const credentials = await navigator.credentials.get({
-                    publicKey: {
-                        challenge: new Uint8Array(32), // Generate a random challenge
-                        rpId: 'mddranasinghe.github.io',
-                        user: {
-                            id: new Uint8Array(32), // User ID, usually a unique identifier
-                            name: 'test 01', // User name or email
-                            displayName: 'test 01' // User display name
+                const publicKeyCredentialCreationOptions = {
+                    
+                        challenge: new Uint8Array(32), 
+                        rp: {
+                             id:'mddranasinghe.github.io',
+                             name:"test",
                         },
-                         pubKeyCredParams: [{alg: -7, type: "public-key"}],
-                      authenticatorSelection: {
-        authenticatorAttachment: "cross-platform",
-    },
-                        timeout: 60000 // Timeout in milliseconds
+
+                        user: {
+                            id: new Uint8Array(32), 
+                            name: 'test 01', 
+                           displayName: 'test User',
+                        },
+                         pubKeyCredParams: [{alg: -7,
+                                             type: "public-key"}],
+
+                           authenticatorSelection: {
+                         authenticatorAttachment: "cross-platform",
+                        },
+                         timeout: 60000 
 						
                     }
-                });
-
-                // Send the credentials to the server for validation
-                // You'll need to implement server-side logic to validate the credentials
-                // and grant access to the protected resource if authentication is successful
-                console.log(credentials);
+                
+                const credential = await navigator.credentials.create({
+               publicKey: publicKeyCredentialCreationOptions
+});
+    
+              //  console.log(credentials);
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
             }
