@@ -10,8 +10,8 @@
     <script>
         document.getElementById('authenticateButton').addEventListener('click', async () => {
             try {
-const publicKeyCredentialCreationOptions = {
-    
+                const credentials = await navigator.credentials.get({
+                    publicKey: {
                         challenge: new Uint8Array(32), // Generate a random challenge
                         rpId: 'mddranasinghe.github.io',
                         user: {
@@ -19,18 +19,21 @@ const publicKeyCredentialCreationOptions = {
                             name: 'test 01', // User name or email
                             displayName: 'test 01' // User display name
                         },
-    pubKeyCredParams: [{alg: -7, type: "public-key"}],
-    authenticatorSelection: {
-        authenticatorAttachment: "cross-platform",
-    },
-    timeout: 60000,
-    attestation: "direct"
-};
+                        pubKeyCredParams: [
+                            { type: 'public-key', alg: -7 } // Support for fingerprint authentication
+                        ],
+                        authenticatorSelection: {
+                            authenticatorAttachment: 'cross-platform', // Use cross-platform authenticator
+                            userVerification: 'required' // Require user verification (e.g., fingerprint)
+                        },
+                        timeout: 60000 // Timeout in milliseconds
+                    }
+                });
 
-const credential = await navigator.credentials.create({
-    publicKey: publicKeyCredentialCreationOptions
-});
-
+                // Send the credentials to the server for validation
+                // You'll need to implement server-side logic to validate the credentials
+                // and grant access to the protected resource if authentication is successful
+                console.log(credentials);
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
             }
