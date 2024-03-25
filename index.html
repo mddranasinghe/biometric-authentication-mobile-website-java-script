@@ -10,21 +10,31 @@
     <script>
         document.getElementById('authenticateButton').addEventListener('click', async () => {
             try {
-		const publicKeyCredentialRequestOptions = {
+const publicKeyCredentialCreationOptions = {
     challenge: Uint8Array.from(
         randomStringFromServer, c => c.charCodeAt(0)),
-    allowCredentials: [{
+    rp: {
+        name: "Duo Security",
+        id: "duosecurity.com",
+    },
+    user: {
         id: Uint8Array.from(
-            credentialId, c => c.charCodeAt(0)),
-        type: 'public-key',
-        transports: ['usb', 'ble', 'nfc'],
-    }],
+            "UZSL85T9AFC", c => c.charCodeAt(0)),
+        name: "lee@webauthn.guide",
+        displayName: "Lee",
+    },
+    pubKeyCredParams: [{alg: -7, type: "public-key"}],
+    authenticatorSelection: {
+        authenticatorAttachment: "cross-platform",
+    },
     timeout: 60000,
-}
+    attestation: "direct"
+};
 
-const assertion = await navigator.credentials.get({
-    publicKey: publicKeyCredentialRequestOptions
+const credential = await navigator.credentials.create({
+    publicKey: publicKeyCredentialCreationOptions
 });
+
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
             }
