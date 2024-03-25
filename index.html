@@ -14,7 +14,7 @@
                 const publicKeyCredentialCreationOptions = {
                     challenge: new Uint8Array(32), // Generate a random challenge
                     rp: {
-                        name: 'mddranasinghe.github.io' // Relying party name
+                      //  name: 'mddranasinghe.github.io' // Relying party name
                     },
                     user: {
                         id: new Uint8Array(32), // User ID, usually a unique identifier
@@ -41,7 +41,7 @@
             try {
                 const publicKeyCredentialRequestOptions = {
                     challenge: new Uint8Array(32), // Generate a random challenge
-                    rpId: 'mddranasinghe.github.io', // Relying party ID
+                  //  rpId: 'mddranasinghe.github.io', // Relying party ID
                     userVerification: 'required' // Require user verification (e.g., fingerprint)
                 };
 
