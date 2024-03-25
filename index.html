@@ -19,16 +19,14 @@
                             name: 'test 01', // User name or email
                             displayName: 'test 01' // User display name
                         },
-                        pubKeyCredParams: [
-                            { type: 'public-key', alg: -7 } // Support for fingerprint authentication
-                        ],
-                        authenticatorSelection: {
-                            authenticatorAttachment: 'cross-platform', // Use cross-platform authenticator
-                            userVerification: 'required' // Require user verification (e.g., fingerprint)
-                        },
-                        timeout: 60000 // Timeout in milliseconds
-                    }
-                });
+                        pubKeyCredParams: [{alg: -7, type: "public-key"}],
+    authenticatorSelection: {
+        authenticatorAttachment: "cross-platform",
+    },
+    timeout: 60000,
+    attestation: "direct"
+                    
+               };
 
                 // Send the credentials to the server for validation
                 // You'll need to implement server-side logic to validate the credentials
