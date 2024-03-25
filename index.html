@@ -23,8 +23,16 @@
                             name: 'test 01', 
                            displayName: 'test User',
                         },
-                         pubKeyCredParams: [{alg: -7,
-                                             type: "public-key"}],
+                        pubKeyCredParams: [
+    {
+      type: "public-key",
+      alg: -7 // "ES256" as registered in the IANA COSE Algorithms registry
+    },
+    {
+      type: "public-key",
+      alg: -257 // Value registered by this specification for "RS256"
+    }
+  ],
 
                            authenticatorSelection: {
                          authenticatorAttachment: "cross-platform",
