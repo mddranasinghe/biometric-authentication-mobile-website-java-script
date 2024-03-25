@@ -39,7 +39,7 @@
         });
 
         document.getElementById('authenticateButton').addEventListener('click', async () => {
-           if(credential){
+           if(credential === 0){
             try {
                 const publicKeyCredentialRequestOptions = {
                     challenge: new Uint8Array(32), 
