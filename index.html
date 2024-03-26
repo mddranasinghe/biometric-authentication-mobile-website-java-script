@@ -3,35 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAuthn Demo</title>
+    <title>WebAuthn Authentication</title>
 </head>
 <body>
-    <h1>WebAuthn Demo</h1>
-
-    <h2>Registration</h2>
     <button id="registerButton">Register Credentials</button>
-
-    <h2>Authentication</h2>
-    <button id="authenticateButton">Authenticate</button>
-
+    <button id="authenticateButton">Authenticate with WebAuthn</button>
+    <div id="d">l7l</div>
     <script>
-        // Function to handle registration of WebAuthn credentials
-        async function registerCredentials() {
+         
+       document.getElementById('registerButton').addEventListener('click', async () => {
             try {
-                // Generate a random challenge
-                const challenge = new Uint8Array(32);
-                
-                // Create PublicKeyCredentialCreationOptions
                 const publicKeyCredentialCreationOptions = {
-                    challenge: challenge,
-                    rp: { name: 'WebAuthn Demo Site' },
-                    user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' },
-                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-                    timeout: 60000
+                    challenge: new Uint8Array(32), 
+                    rp: {
+                        name: 'waterpump/controler' 
+                    },
+                    user: {
+                        id: new Uint8Array(32), 
+                        name: 'Water09', 
+                        displayName: 'Water Pump Controler' 
+                    },
+                    pubKeyCredParams: [
+                    {
+        "alg": -8,
+        "type": "public-key"
+      },
+      {
+        "alg": -7,
+        "type": "public-key"
+      },
+      {
+        "alg": -257,
+        "type": "public-key"
+      }
+                    ],
+                    timeout: 60000 
                 };
 
-                // Register credentials
-                const credential = await navigator.credentials.create({
+                 const credential = await navigator.credentials.create({
                     publicKey: publicKeyCredentialCreationOptions
                 });
 
@@ -39,21 +48,18 @@
             } catch (error) {
                 console.error('Error during credential registration:', error);
             }
-        }
+        });
 
-        // Function to handle authentication using WebAuthn credentials
-        async function authenticate() {
+        document.getElementById('authenticateButton').addEventListener('click', async () => {
+         //  if(credential){
+         //   document.getElementById('d').innerHTML=credential;
             try {
-                // Generate a random challenge
-                const challenge = new Uint8Array(32);
-
-                // Create PublicKeyCredentialRequestOptions
                 const publicKeyCredentialRequestOptions = {
-                    challenge: challenge,
-                    userVerification: 'required'
+                    challenge: new Uint8Array(32), 
+                 rpId: 'waterpump/controler' , // Relying party ID
+                    userVerification: 'required' // Require user verification (e.g., fingerprint)
                 };
 
-                // Get credentials for authentication
                 const credential = await navigator.credentials.get({
                     publicKey: publicKeyCredentialRequestOptions
                 });
@@ -62,11 +68,18 @@
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
             }
-        }
 
-        // Add event listeners to buttons
-        document.getElementById('registerButton').addEventListener('click', registerCredentials);
-        document.getElementById('authenticateButton').addEventListener('click', authenticate);
+            if (credential) {
+                // Redirect to water pump control page only if authentication is enabled
+                window.location.href = "home.html";
+            } else {
+                // Perform water pump control functionality without authentication
+                alert('Controlling water pump without authentication');
+                // Add your logic for controlling the water pump here
+            }
+
+      //  }
+        });
     </script>
 </body>
 </html>
