@@ -15,29 +15,29 @@
     <button id="authenticateButton">Authenticate</button>
 
     <script>
-        // Function to handle registration of WebAuthn credentials
-        async function registerCredentials() {
+        // Function to handle registration and storage of WebAuthn credentials
+        async function registerAndStoreCredentials() {
             try {
-                // Generate a random challenge
-                const challenge = new Uint8Array(32);
-                
-                // Create PublicKeyCredentialCreationOptions
+                // Generate PublicKeyCredentialCreationOptions for registration
                 const publicKeyCredentialCreationOptions = {
-                    challenge: challenge,
-                    rp: { name: 'WebAuthn Demo ' },
+                    challenge: new Uint8Array(32),
+                    rp: { name: 'WebAuthn Demo' },
                     user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' },
                     pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                     timeout: 60000
                 };
 
-                // Register credentials
+                // Register credentials with WebAuthn
                 const credential = await navigator.credentials.create({
                     publicKey: publicKeyCredentialCreationOptions
                 });
 
-                console.log('Credential registered:', credential);
+                // Store the credential on the Android device
+                const result = await navigator.credentials.store(credential);
+
+                console.log('Credential stored successfully:', result);
             } catch (error) {
-                console.error('Error during credential registration:', error);
+                console.error('Error storing credential:', error);
             }
         }
 
@@ -65,7 +65,7 @@
         }
 
         // Add event listeners to buttons
-        document.getElementById('registerButton').addEventListener('click', registerCredentials);
+        document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
         document.getElementById('authenticateButton').addEventListener('click', authenticate);
     </script>
 </body>
