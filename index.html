@@ -24,7 +24,18 @@
                         displayName: 'Water Pump Controler' 
                     },
                     pubKeyCredParams: [
-                        { type: 'public-key', alg: -7 } 
+                    {
+        "alg": -8,
+        "type": "public-key"
+      },
+      {
+        "alg": -7,
+        "type": "public-key"
+      },
+      {
+        "alg": -257,
+        "type": "public-key"
+      }
                     ],
                     timeout: 60000 
                 };
@@ -53,9 +64,6 @@
                     publicKey: publicKeyCredentialRequestOptions
                 });
 
-                // Send the credential to the server for validation
-                // You'll need to implement server-side logic to validate the credential
-                // and grant access to the protected resource if authentication is successful
                 console.log('Credential authenticated:', credential);
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
@@ -63,7 +71,7 @@
 
             if (credential) {
                 // Redirect to water pump control page only if authentication is enabled
-                window.location.href = "";
+                window.location.href = "home.html";
             } else {
                 // Perform water pump control functionality without authentication
                 alert('Controlling water pump without authentication');
