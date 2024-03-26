@@ -32,10 +32,10 @@
                     publicKey: publicKeyCredentialCreationOptions
                 });
 
-                // Store the credential on the Android device
-                const result = await navigator.credentials.store(credential);
+                // Store the credential in localStorage
+                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
-                console.log('Credential stored successfully:', result);
+                console.log('Credential stored successfully:', credential);
             } catch (error) {
                 console.error('Error storing credential:', error);
             }
@@ -44,6 +44,13 @@
         // Function to handle authentication using WebAuthn credentials
         async function authenticate() {
             try {
+                // Retrieve the stored credential from localStorage
+                const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
+                if (!storedCredential) {
+                    console.error('No stored credential found.');
+                    return;
+                }
+
                 // Generate a random challenge
                 const challenge = new Uint8Array(32);
 
