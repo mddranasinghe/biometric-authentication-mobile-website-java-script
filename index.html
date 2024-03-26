@@ -61,6 +61,15 @@
                 console.error('Error during WebAuthn authentication:', error);
             }
 
+            if (credential) {
+                // Redirect to water pump control page only if authentication is enabled
+                window.location.href = "home.html";
+            } else {
+                // Perform water pump control functionality without authentication
+                alert('Controlling water pump without authentication');
+                // Add your logic for controlling the water pump here
+            }
+
       //  }
         });
     </script>
