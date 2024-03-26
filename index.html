@@ -20,7 +20,7 @@
                     },
                     user: {
                         id: new Uint8Array(32), 
-                        name: 'Water Pump8082', 
+                        name: 'Water', 
                         displayName: 'Water Pump Controler' 
                     },
                     pubKeyCredParams: [
@@ -63,7 +63,7 @@
 
             if (credential) {
                 // Redirect to water pump control page only if authentication is enabled
-                window.location.href = "home.html";
+                window.location.href = "";
             } else {
                 // Perform water pump control functionality without authentication
                 alert('Controlling water pump without authentication');
