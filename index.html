@@ -14,7 +14,7 @@
     <h2>Authentication</h2>
     <button id="authenticateButton">Authenticate</button>
 
-    <div id=" idd">gggggggggggg </div>
+    <div id="idd">gggggggggggg </div>
 
     <script>
         // Function to handle registration and storage of WebAuthn credentials
@@ -41,10 +41,11 @@
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
-                document.getElementById('idd').innerHtml=credential;
+                document.getElementById('idd').innerHTML=credential;
 
             } catch (error) {
                 console.error('Error storing credential:', error);
+                document.getElementById('idd').innerHTML = 'Error';
             }
         }
 
