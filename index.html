@@ -88,7 +88,7 @@
 
         if (signatureIsValid) {
             console.log('Credential authenticated:', credential);
-            displayError('Credential authenticated');
+            displayError('Credential authenticated', credential);
         } else {
             console.error('Signature verification failed.');
             displayError('Signature verification failed.');
