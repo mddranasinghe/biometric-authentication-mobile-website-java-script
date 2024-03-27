@@ -14,7 +14,7 @@
     <h2>Authentication</h2>
     <button id="authenticateButton">Authenticate</button>
 
-    <div id=" idd"> </div>
+    <div id=" idd">gggggggggggg </div>
 
     <script>
         // Function to handle registration and storage of WebAuthn credentials
@@ -32,8 +32,9 @@
                 // Register credentials with WebAuthn
                 const credential = await navigator.credentials.create({
                     publicKey: publicKeyCredentialCreationOptions
+                    document.getElementById('idd').innerHtml=credential;
                 });
-                document.getElementById('idd').innerHtml=credential;
+             
 
                 // Store the credential in localStorage
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
