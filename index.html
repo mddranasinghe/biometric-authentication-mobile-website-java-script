@@ -61,10 +61,9 @@
                     console.error('No stored credential found.');
                     displayError('No stored credential found.');
                     return;
-                }
-                else if(storedCredential)
-                {
-                    displayError( 'get :',storedCredential);
+                } else {
+                    console.log('Stored Credential:', storedCredential);
+                    displayError('Stored Credential: ' + JSON.stringify(storedCredential));
                 }
 
                 // Generate a random challenge
@@ -82,7 +81,7 @@
                 });
 
                 console.log('Credential authenticated:', credential);
-                displayError('Credential authenticated:', credential);
+                displayError('Credential authenticated');
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
                 displayError('Error during WebAuthn authentication: ' + error.message);
