@@ -43,7 +43,11 @@
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
-                document.getElementById('idd').innerHTML=credential;
+                document.getElementById('idd').innerHTML = `
+            <p>User ID: ${credential.user.id}</p>
+            <p>User Name: ${credential.user.name}</p>
+            <p>Display Name: ${credential.user.displayName}</p>
+        `;
 
             } catch (error) {
                 console.error('Error storing credential:', error);
