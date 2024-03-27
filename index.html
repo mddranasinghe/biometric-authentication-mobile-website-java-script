@@ -54,6 +54,7 @@
             try {
                 // Retrieve the stored credential from localStorage
                 const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
+                document.getElementById('idd').innerHTML=toredCredential;
                 if (!storedCredential) {
                     console.error('No stored credential found.');
                     return;
