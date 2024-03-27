@@ -30,7 +30,7 @@
                 const publicKeyCredentialCreationOptions = {
                     challenge: new Uint8Array(32),
                     rp: { name: 'WebAuthn Demo' },
-                    user: { id: new Uint8Array(16), name: 'user@example.com',},
+                    user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
                     pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                     timeout: 60000
                 };
