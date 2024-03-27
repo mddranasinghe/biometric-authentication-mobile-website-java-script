@@ -51,41 +51,40 @@
             }
         }
 
+        // Function to handle authentication using WebAuthn credentials
         async function authenticate() {
-    try {
-        // Retrieve the stored credential from localStorage
-        const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
-        if (!storedCredential) {
-            console.error('No stored credential found.');
-            return;
-        }
-
-        // Display information about the stored credential
-        document.getElementById('idd2').innerHTML = `
+            try {
+                // Retrieve the stored credential from localStorage
+                const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
+                document.getElementById('idd2').innerHTML = `
             <p>User ID: ${storedCredential.user.id}</p>
             <p>User Name: ${storedCredential.user.name}</p>
             <p>Display Name: ${storedCredential.user.displayName}</p>
         `;
+                if (!storedCredential) {
+                    console.error('No stored credential found.');
+                    return;
+                }
 
-        // Generate a random challenge
-        const challenge = new Uint8Array(32);
+                // Generate a random challenge
+                const challenge = new Uint8Array(32);
 
-        // Create PublicKeyCredentialRequestOptions
-        const publicKeyCredentialRequestOptions = {
-            challenge: challenge,
-            userVerification: 'required'
-        };
+                // Create PublicKeyCredentialRequestOptions
+                const publicKeyCredentialRequestOptions = {
+                    challenge: challenge,
+                    userVerification: 'required'
+                };
 
-        // Get credentials for authentication
-        const credential = await navigator.credentials.get({
-            publicKey: publicKeyCredentialRequestOptions
-        });
+                // Get credentials for authentication
+                const credential = await navigator.credentials.get({
+                    publicKey: publicKeyCredentialRequestOptions
+                });
 
-        console.log('Credential authenticated:', credential);
-    } catch (error) {
-        console.error('Error during WebAuthn authentication:', error);
-    }
-}
+                console.log('Credential authenticated:', credential);
+            } catch (error) {
+                console.error('Error during WebAuthn authentication:', error);
+            }
+        }
 
         // Add event listeners to buttons
         document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
