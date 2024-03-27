@@ -14,7 +14,15 @@
     <h2>Authentication</h2>
     <button id="authenticateButton">Authenticate</button>
 
+    <!-- Error message display area -->
+    <div id="errorMessage" style="color: red;"></div>
+
     <script>
+        // Function to display error message on the web page
+        function displayError(message) {
+            document.getElementById('errorMessage').innerText = message;
+        }
+
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
             try {
@@ -38,6 +46,7 @@
                 console.log('Credential stored successfully:', credential);
             } catch (error) {
                 console.error('Error storing credential:', error);
+                displayError('Error storing credential: ' + error.message);
             }
         }
 
@@ -48,6 +57,7 @@
                 const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
                 if (!storedCredential) {
                     console.error('No stored credential found.');
+                    displayError('No stored credential found.');
                     return;
                 }
 
@@ -68,6 +78,7 @@
                 console.log('Credential authenticated:', credential);
             } catch (error) {
                 console.error('Error during WebAuthn authentication:', error);
+                displayError('Error during WebAuthn authentication: ' + error.message);
             }
         }
 
