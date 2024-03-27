@@ -30,7 +30,7 @@
                 const publicKeyCredentialCreationOptions = {
                     challenge: new Uint8Array(32),
                     rp: { name: 'WebAuthn Demo' },
-                    user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' },
+                    user: { id: new Uint8Array(16), name: 'user@example.com',},
                     pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                     timeout: 60000
                 };
@@ -41,7 +41,7 @@
                 });
 
                 // Store the credential in localStorage
-                localStorage.setItem('webauthnCredential',(credential));
+                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
                 displayError('Credential stored successfully');
