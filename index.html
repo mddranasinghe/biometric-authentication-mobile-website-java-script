@@ -15,6 +15,7 @@
     <button id="authenticateButton">Authenticate</button>
 
     <div id="idd">gggggggggggg </div>
+    <div id="idd2">gggggggggggg </div>
 
     <script>
         // Function to handle registration and storage of WebAuthn credentials
@@ -54,7 +55,7 @@
             try {
                 // Retrieve the stored credential from localStorage
                 const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
-                document.getElementById('idd').innerHTML=storedCredential;
+                document.getElementById('idd2').innerHTML=storedCredential;
                 if (!storedCredential) {
                     console.error('No stored credential found.');
                     return;
