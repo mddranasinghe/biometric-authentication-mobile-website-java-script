@@ -41,9 +41,9 @@
                 });
 
                 // Store the credential in localStorage
-                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
+                localStorage.setItem('webauthnCredential',(credential));
 
-                console.log('Credential stored successfully:', credential.id);
+                console.log('Credential stored successfully:', credential);
                 displayError('Credential stored successfully');
             } catch (error) {
                 console.error('Error storing credential:', error);
