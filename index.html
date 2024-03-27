@@ -27,12 +27,13 @@
                     user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' },
                     pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                     timeout: 60000
+
+
                 };
 
                 // Register credentials with WebAuthn
                 const credential = await navigator.credentials.create({
                     publicKey: publicKeyCredentialCreationOptions
-                    document.getElementById('idd').innerHtml=credential;
                 });
              
 
@@ -40,6 +41,8 @@
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
+                document.getElementById('idd').innerHtml=credential;
+
             } catch (error) {
                 console.error('Error storing credential:', error);
             }
