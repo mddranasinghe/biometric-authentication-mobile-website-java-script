@@ -41,10 +41,10 @@
                 });
 
                 // Store the credential in localStorage
-                localStorage.setItem('webauthnCredential', (credential));
+                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
-                displayError(' storing credential: ' + credential);
+                displayError('Credential stored successfully');
             } catch (error) {
                 console.error('Error storing credential:', error);
                 displayError('Error storing credential: ' + error.message);
@@ -55,7 +55,8 @@
         async function authenticate() {
             try {
                 // Retrieve the stored credential from localStorage
-                const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
+                const storedCredentialJSON = localStorage.getItem('webauthnCredential');
+                const storedCredential = storedCredentialJSON ? JSON.parse(storedCredentialJSON) : null;
                 if (!storedCredential) {
                     console.error('No stored credential found.');
                     displayError('No stored credential found.');
