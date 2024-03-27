@@ -14,10 +14,6 @@
     <h2>Authentication</h2>
     <button id="authenticateButton">Authenticate</button>
 
-    <div id="idd">gggggggggggg </div>
-    <br><br>
-    <div id="idd2">gggggggggggg </div>
-
     <script>
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
@@ -40,15 +36,8 @@
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
-                document.getElementById('idd').innerHTML = `
-                    <p>User ID: ${credential.user.id}</p>
-                    <p>User Name: ${credential.user.name}</p>
-                    <p>Display Name: ${credential.user.displayName}</p>
-                `;
-
             } catch (error) {
                 console.error('Error storing credential:', error);
-                document.getElementById('idd').innerHTML = 'Error';
             }
         }
 
@@ -57,11 +46,6 @@
             try {
                 // Retrieve the stored credential from localStorage
                 const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
-                document.getElementById('idd2').innerHTML = `
-                    <p>User ID: ${storedCredential.user.id}</p>
-                    <p>User Name: ${storedCredential.user.name}</p>
-                    <p>Display Name: ${storedCredential.user.displayName}</p>
-                `;
                 if (!storedCredential) {
                     console.error('No stored credential found.');
                     return;
