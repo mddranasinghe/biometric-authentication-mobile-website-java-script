@@ -29,24 +29,22 @@
                     user: { id: new Uint8Array(16), name: 'user@example.com', displayName: 'User' },
                     pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
                     timeout: 60000
-
-
                 };
 
                 // Register credentials with WebAuthn
                 const credential = await navigator.credentials.create({
                     publicKey: publicKeyCredentialCreationOptions
                 });
-             
 
                 // Store the credential in localStorage
                 localStorage.setItem('webauthnCredential', JSON.stringify(credential));
 
                 console.log('Credential stored successfully:', credential);
                 document.getElementById('idd').innerHTML = `
-            <p>User Name: ${credential.user.name}</p>
-            <p>Display Name: ${credential.user.displayName}</p>
-        `;
+                    <p>User ID: ${credential.user.id}</p>
+                    <p>User Name: ${credential.user.name}</p>
+                    <p>Display Name: ${credential.user.displayName}</p>
+                `;
 
             } catch (error) {
                 console.error('Error storing credential:', error);
@@ -60,10 +58,10 @@
                 // Retrieve the stored credential from localStorage
                 const storedCredential = JSON.parse(localStorage.getItem('webauthnCredential'));
                 document.getElementById('idd2').innerHTML = `
-            <p>User ID: ${storedCredential.user.id}</p>
-            <p>User Name: ${storedCredential.user.name}</p>
-            <p>Display Name: ${storedCredential.user.displayName}</p>
-        `;
+                    <p>User ID: ${storedCredential.user.id}</p>
+                    <p>User Name: ${storedCredential.user.name}</p>
+                    <p>Display Name: ${storedCredential.user.displayName}</p>
+                `;
                 if (!storedCredential) {
                     console.error('No stored credential found.');
                     return;
