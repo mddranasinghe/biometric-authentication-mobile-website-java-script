@@ -43,11 +43,22 @@
 
         // Function to store credentials in IndexedDB
         async function storeCredential(credential) {
-            const transaction = db.transaction(['credentials'], 'readwrite');
-            const store = transaction.objectStore('credentials');
-            store.add(credential);
+    // Extract necessary data from the PublicKeyCredential object
+    const publicKeyCredential = {
+        id: credential.id,
+        type: credential.type,
+        rawId: credential.rawId,
+        response: {
+            attestationObject: Array.from(new Uint8Array(credential.response.attestationObject)),
+            clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON))
         }
+    };
 
+    // Store the extracted data in IndexedDB
+    const transaction = db.transaction(['credentials'], 'readwrite');
+    const store = transaction.objectStore('credentials');
+    store.add(publicKeyCredential);
+}
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
             try {
