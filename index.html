@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,98 +17,119 @@
     <div id="errorMessage" style="color: red;"></div>
 
     <script>
-        // Function to display error message on the web page
-        function displayError(message) {
-            document.getElementById('errorMessage').innerText = message;
-        }
+        // Initialize IndexedDB
+        let db;
 
-        // Function to handle registration and storage of WebAuthn credentials
-        async function registerAndStoreCredentials() {
-            try {
-                // Generate PublicKeyCredentialCreationOptions for registration
-                const publicKeyCredentialCreationOptions = {
-                    challenge: new Uint8Array(32),
-                    rp: { name: 'WebAuthn Demo' },
-                    user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
-                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-                    timeout: 60000
+        async function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = window.indexedDB.open('WebAuthnDB', 1);
+
+                request.onerror = () => {
+                    reject('Error opening IndexedDB');
                 };
 
-                // Register credentials with WebAuthn
-                const credential = await navigator.credentials.create({
-                    publicKey: publicKeyCredentialCreationOptions
-                });
+                request.onsuccess = () => {
+                    db = request.result;
+                    resolve();
+                };
 
-                // Store the credential in localStorage
-                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    const store = db.createObjectStore('credentials', { keyPath: 'id' });
+                    store.createIndex('credentialIndex', 'id', { unique: true });
+                };
+            });
+        }
 
-                console.log('Credential stored successfully:', credential);
-                displayError('Credential stored successfully');
-            } catch (error) {
-                console.error('Error storing credential:', error);
-                displayError('Error storing credential: ' + error.message);
-            }
+        // Function to store credentials in IndexedDB
+        async function storeCredentials(credential) {
+            const transaction = db.transaction(['credentials'], 'readwrite');
+            const store = transaction.objectStore('credentials');
+            store.add(credential);
+        }
+
+        // Function to retrieve credentials from IndexedDB
+        async function getStoredCredential() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['credentials'], 'readonly');
+                const store = transaction.objectStore('credentials');
+                const request = store.getAll();
+
+                request.onerror = () => {
+                    reject('Error retrieving stored credential');
+                };
+
+                request.onsuccess = () => {
+                    resolve(request.result[0]); // Assuming only one credential stored
+                };
+            });
         }
 
         // Function to handle authentication using WebAuthn credentials
-    async function authenticate() {
-    try {
-        // Retrieve the stored credential from localStorage
-        const storedCredentialJSON = localStorage.getItem('webauthnCredential');
-        const storedCredential = storedCredentialJSON ? JSON.parse(storedCredentialJSON) : null;
-        if (!storedCredential) {
-            console.error('No stored credential found.');
-            displayError('No stored credential found.');
-            return;
-        } else {
-            console.log('Stored Credential:', storedCredential);
-            displayError('Stored Credential: ' + JSON.stringify(storedCredential));
+        async function authenticate() {
+            try {
+                // Retrieve the stored credential from IndexedDB
+                const storedCredential = await getStoredCredential();
+
+                if (!storedCredential) {
+                    console.error('No stored credential found.');
+                    displayError('No stored credential found.');
+                    return;
+                } else {
+                    console.log('Stored Credential:', storedCredential);
+                    displayError('Stored Credential: ' + JSON.stringify(storedCredential));
+                }
+
+                // Generate a random challenge
+                const challenge = new Uint8Array(32);
+
+                // Create PublicKeyCredentialRequestOptions
+                const publicKeyCredentialRequestOptions = {
+                    challenge: challenge,
+                    userVerification: 'required'
+                };
+
+                // Get credentials for authentication
+                const credential = await navigator.credentials.get({
+                    publicKey: publicKeyCredentialRequestOptions
+                });
+
+                // Calculate signed data
+                const signedData = new Uint8Array([...credential.response.authenticatorData, ...credential.response.clientDataJSON]);
+
+                // Verify the signature
+                // Replace the following line with the appropriate signature verification method
+                const signatureIsValid = await verifySignature(storedCredential.publicKey, credential.response.signature, signedData);
+
+                if (signatureIsValid) {
+                    console.log('Credential authenticated:', credential);
+                    displayError('Credential authenticated', credential);
+                } else {
+                    console.error('Signature verification failed.');
+                    displayError('Signature verification failed.');
+                }
+            } catch (error) {
+                console.error('Error during WebAuthn authentication:', error);
+                displayError('Error during WebAuthn authentication: ' + error.message);
+            }
         }
-
-        // Parse the stored credential fields if needed
-        const decodedCredential = {
-            id: storedCredential.id,
-            attestationObject: storedCredential.attestationObject,
-            clientDataJSON: storedCredential.clientDataJSON
-            // Add other fields as needed
-        };
-
-        // Generate a random challenge
-        const challenge = new Uint8Array(32);
-
-        // Create PublicKeyCredentialRequestOptions
-        const publicKeyCredentialRequestOptions = {
-            challenge: challenge,
-            userVerification: 'required'
-        };
-
-        // Get credentials for authentication
-        const credential = await navigator.credentials.get({
-            publicKey: publicKeyCredentialRequestOptions
-        });
-
-        // Calculate signed data
-        const signedData = new Uint8Array([...credential.response.authenticatorData, ...credential.response.clientDataJSON]);
-
-        // Verify the signature
-        const signatureIsValid = await storedCredential.publicKey.verify(credential.response.signature, signedData);
-
-        if (signatureIsValid) {
-            console.log('Credential authenticated:', credential);
-            displayError('Credential authenticated', credential);
-        } else {
-            console.error('Signature verification failed.');
-            displayError('Signature verification failed.');
-        }
-    } catch (error) {
-        console.error('Error during WebAuthn authentication:', error);
-        displayError('Error during WebAuthn authentication: ' + error.message);
-    }
-}
 
         // Add event listeners to buttons
-        document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
+        document.getElementById('registerButton').addEventListener('click', async () => {
+            await registerAndStoreCredentials();
+            await storeCredentials(JSON.parse(localStorage.getItem('webauthnCredential')));
+        });
+
         document.getElementById('authenticateButton').addEventListener('click', authenticate);
+
+        // Initialize IndexedDB when the document is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initDB();
+            } catch (error) {
+                console.error('Error initializing IndexedDB:', error);
+            }
+        });
     </script>
 </body>
 </html>
