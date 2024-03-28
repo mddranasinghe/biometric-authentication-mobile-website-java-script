@@ -1,115 +1,127 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebAuthn Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebAuthn Demo</title>
 </head>
 <body>
-    <h1>WebAuthn Demo</h1>
+  <h1>WebAuthn Demo</h1>
 
-    <h2>Registration</h2>
-    <button id="registerButton">Register Credentials</button>
+  <h2>Registration</h2>
+  <button id="registerButton">Register Credentials</button>
 
-    <h2>Authentication</h2>
-    <button id="authenticateButton">Authenticate</button>
+  <h2>Authentication</h2>
+  <button id="authenticateButton">Authenticate</button>
 
-    <div id="errorMessage" style="color: red;"></div>
+  <div id="errorMessage" style="color: red;"></div>
 
-    <script>
-        // Function to display error message on the web page
-        function displayError(message) {
-            document.getElementById('errorMessage').innerText = message;
+  <script>
+    // Function to display error message on the web page
+    function displayError(message) {
+      document.getElementById('errorMessage').innerText = message;
+    }
+
+    // Function to handle registration
+    async function registerAndStoreCredentials() {
+      try {
+        // Generate a random challenge using a cryptographically secure method
+        const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge); // Example using crypto.getRandomValues()
+
+        // Send challenge and other registration options to server
+        const publicKeyCredentialCreationOptions = {
+          challenge: challenge,
+          rp: { name: 'WebAuthn Demo' },
+          user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
+          pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+          timeout: 60000
+        };
+
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(publicKeyCredentialCreationOptions)
+        });
+
+        if (!response.ok) {
+          throw new Error(`Registration failed with status: ${response.status}`);
         }
 
-        // Function to handle registration and storage of WebAuthn credentials
-        async function registerAndStoreCredentials() {
-            try {
-                // Generate PublicKeyCredentialCreationOptions for registration
-                const publicKeyCredentialCreationOptions = {
-                    challenge: new Uint8Array(32),
-                    rp: { name: 'WebAuthn Demo' },
-                    user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
-                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-                    timeout: 60000
-                };
+        const credential = await response.json(); // Assuming server returns the credential
 
-                // Register credentials with WebAuthn
-                const credential = await navigator.credentials.create({
-                    publicKey: publicKeyCredentialCreationOptions
-                });
+        // Store the credential securely (placeholder, implement server-side storage or secure Web Storage API)
+        console.log('Credential stored successfully:', credential);
+        displayError('Credential stored successfully');
+      } catch (error) {
+        console.error('Error during registration:', error);
+        displayError('Error during registration: ' + error.message);
+      }
+    }
 
-                // Store the credential in localStorage
-                localStorage.setItem('webauthnCredential', JSON.stringify(credential));
-
-                console.log('Credential stored successfully:', credential);
-                displayError('Credential stored successfully');
-            } catch (error) {
-                console.error('Error storing credential:', error);
-                displayError('Error storing credential: ' + error.message);
-            }
-        }
-
-        // Function to handle authentication using WebAuthn credentials
-        async function authenticate() {
-    try {
-        // Retrieve the stored credential from localStorage
-        const storedCredentialJSON = localStorage.getItem('webauthnCredential');
+    // Function to handle authentication using WebAuthn credentials
+    async function authenticate() {
+      try {
+      // Retrieve the stored credential from localStorage
+      const storedCredentialJSON = localStorage.getItem('webauthnCredential');
         const storedCredential = storedCredentialJSON ? JSON.parse(storedCredentialJSON) : null;
         if (!storedCredential) {
-            console.error('No stored credential found.');
-            displayError('No stored credential found.');
-            return;
-        } else {
-            console.log('Stored Credential:', storedCredential);
-            displayError('Stored Credential: ' + JSON.stringify(storedCredential));
+          console.error('No stored credential found.');
+          displayError('No stored credential found.');
+          return;
         }
-
-        // Parse the stored credential fields if needed
-        const decodedCredential = {
-            id: storedCredential.id,
-            attestationObject: storedCredential.attestationObject,
-            clientDataJSON: storedCredential.clientDataJSON
-            // Add other fields as needed
-        };
 
         // Generate a random challenge
         const challenge = new Uint8Array(32);
+        window.crypto.getRandomValues(challenge);
 
-        // Create PublicKeyCredentialRequestOptions
+        // Send challenge and other authentication options to server
         const publicKeyCredentialRequestOptions = {
-            challenge: challenge,
-            userVerification: 'required'
+          challenge: challenge,
+          userVerification: 'required'
         };
 
-        // Get credentials for authentication
-        const credential = await navigator.credentials.get({
-            publicKey: publicKeyCredentialRequestOptions
+        const response = await fetch('/authenticate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ storedCredential, publicKeyCredentialRequestOptions })
         });
 
-        // Calculate signed data
-        const signedData = new Uint8Array([...credential.response.authenticatorData, ...credential.response.clientDataJSON]);
+        if (!response.ok) {
+          throw new Error(`Authentication failed with status: ${response.status}`);
+        }
 
-        // Verify the signature
-        const signatureIsValid = await storedCredential.publicKey.verify(credential.response.signature, signedData);
+        const authenticationData = await response.json(); // Assuming server returns authentication data
+
+        // Verify the signature (server should provide necessary information)
+        const signatureIsValid = await storedCredential.publicKey.verify(/* ... signature verification logic ... */);
 
         if (signatureIsValid) {
-            console.log('Credential authenticated:', credential);
-            displayError('Credential authenticated', credential);
+          console.log('Credential authenticated:', authenticationData);
+          displayError('Credential authenticated');
         } else {
-            console.error('Signature verification failed.');
-            displayError('Signature verification failed.');
+          console.error('Signature verification failed.');
+          displayError('Signature verification failed.');
         }
-    } catch (error) {
+      } catch (error) {
         console.error('Error during WebAuthn authentication:', error);
         displayError('Error during WebAuthn authentication: ' + error.message);
+      }
     }
-}
 
-        // Add event listeners to buttons
-        document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
-        document.getElementById('authenticateButton').addEventListener('click', authenticate);
-    </script>
+    // Add event listeners to buttons
+    document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
+    document.getElementById('authenticateButton').addEventListener('click', authenticate);
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
