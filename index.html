@@ -17,7 +17,7 @@
     <div id="errorMessage" style="color: red;"></div>
 
     <script>
-           function displayError(message) {
+        function displayError(message) {
             document.getElementById('errorMessage').innerText = message;
         }
         // Initialize IndexedDB
@@ -117,12 +117,7 @@
             }
         }
 
-        // Add event listeners to buttons
-        document.getElementById('registerButton').addEventListener('click', async () => {
-            await registerAndStoreCredentials();
-            await storeCredentials(JSON.parse(localStorage.getItem('webauthnCredential')));
-        });
-
+        // Add event listener to the authenticate button
         document.getElementById('authenticateButton').addEventListener('click', authenticate);
 
         // Initialize IndexedDB when the document is ready
