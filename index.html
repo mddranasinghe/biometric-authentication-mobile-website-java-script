@@ -56,15 +56,33 @@
     try {
         // Retrieve the stored credential from localStorage
         const storedCredentialJSON = localStorage.getItem('webauthnCredential');
-        const storedCredential = storedCredentialJSON ? JSON.parse(storedCredentialJSON) : null;
-        if (!storedCredential) {
-            console.error('No stored credential found.');
-            displayError('No stored credential found.');
-            return;
-        } else {
-            console.log('Stored Credential:', storedCredential);
-            displayError('Stored Credential: ' + JSON.stringify(storedCredential));
-        }
+const storedCredential = storedCredentialJSON ? JSON.parse(storedCredentialJSON) : null;
+
+if (!storedCredential) {
+    console.error('No stored credential found.');
+    displayError('No stored credential found.');
+    return;
+} else {
+    // Decode the storedCredential
+    const decodedCredential = {
+        id: base64url.decode(storedCredential.id),
+        rawId: base64url.decode(storedCredential.rawId),
+        type: storedCredential.type
+    };
+
+    if (storedCredential.response) {
+        const clientDataJSON = base64url.decode(storedCredential.response.clientDataJSON);
+        const attestationObject = base64url.decode(storedCredential.response.attestationObject);
+        decodedCredential.response = {
+            clientDataJSON,
+            attestationObject
+        };
+    }
+
+    console.log('Decoded Stored Credential:', decodedCredential);
+    displayError('Decoded Stored Credential: ' + JSON.stringify(decodedCredential));
+}
+
 
         // Generate a random challenge
         const challenge = new Uint8Array(32);
