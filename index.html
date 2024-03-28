@@ -65,14 +65,14 @@ if (!storedCredential) {
 } else {
     // Decode the storedCredential
     const decodedCredential = {
-        id: base64url.decode(storedCredential.id),
-        rawId: base64url.decode(storedCredential.rawId),
+        id: base64UrlDecode(storedCredential.id),
+        rawId: base64UrlDecode(storedCredential.rawId),
         type: storedCredential.type
     };
 
     if (storedCredential.response) {
-        const clientDataJSON = base64url.decode(storedCredential.response.clientDataJSON);
-        const attestationObject = base64url.decode(storedCredential.response.attestationObject);
+        const clientDataJSON = base64UrlDecode(storedCredential.response.clientDataJSON);
+        const attestationObject = base64UrlDecode(storedCredential.response.attestationObject);
         decodedCredential.response = {
             clientDataJSON,
             attestationObject
@@ -102,7 +102,7 @@ if (!storedCredential) {
         const signedData = new Uint8Array([...credential.response.authenticatorData, ...credential.response.clientDataJSON]);
 
         // Verify the signature
-        const signatureIsValid = await storedCredential.publicKey.verify(credential.response.signature, signedData);
+        const signatureIsValid = await decodedCredential.publicKey.verify(credential.response.signature, signedData);
 
         if (signatureIsValid) {
             console.log('Credential authenticated:', credential);
