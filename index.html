@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Save Username and Password</title>
+    <title>WebAuthn Demo</title>
 </head>
 <body>
-    <h1>Save Username and Password</h1>
+    <h1>WebAuthn Demo</h1>
 
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username"><br><br>
+    <h2>Registration</h2>
+    <button id="registerButton">Register Credentials</button>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password"><br><br>
+    <h2>Authentication</h2>
+    <button id="authenticateButton">Authenticate</button>
 
-    <button onclick="saveCredentials()">Save Credentials</button>
-    <button onclick="displayCredentials()">display Credentials</button>
+    <div id="errorMessage" style="color: red;"></div>
+
     <script>
+        // Initialize IndexedDB
         let db;
 
         async function initDB() {
             return new Promise((resolve, reject) => {
-                const request = window.indexedDB.open('CredentialsDB', 1);
+                const request = window.indexedDB.open('WebAuthnDB', 1);
 
                 request.onerror = () => {
                     reject('Error opening IndexedDB');
@@ -34,85 +35,107 @@
 
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result;
-                    const store = db.createObjectStore('credentials', { keyPath: 'username' });
-                    store.createIndex('usernameIndex', 'username', { unique: true });
+                    const store = db.createObjectStore('credentials', { keyPath: 'id' });
+                    store.createIndex('credentialIndex', 'id', { unique: true });
                 };
             });
         }
 
-        async function saveCredentials() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+        // Function to store credentials in IndexedDB
+        async function storeCredential(credential) {
+            const transaction = db.transaction(['credentials'], 'readwrite');
+            const store = transaction.objectStore('credentials');
+            store.add(credential);
+        }
 
-            if (!username || !password) {
-                alert('Please enter both username and password.');
-                return;
-            }
-
+        // Function to handle registration and storage of WebAuthn credentials
+        async function registerAndStoreCredentials() {
             try {
-                await initDB();
+                // Generate PublicKeyCredentialCreationOptions for registration
+                const publicKeyCredentialCreationOptions = {
+                    challenge: new Uint8Array(32),
+                    rp: { name: 'WebAuthn Demo' },
+                    user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
+                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+                    timeout: 60000
+                };
 
-                const transaction = db.transaction(['credentials'], 'readwrite');
+                // Register credentials with WebAuthn
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                // Store the credential in IndexedDB
+                await initDB();
+                await storeCredential(credential);
+
+                console.log('Credential stored successfully:', credential);
+                displayError('Credential stored successfully');
+            } catch (error) {
+                console.error('Error storing credential:', error);
+                displayError('Error storing credential: ' + error.message);
+            }
+        }
+
+        // Function to handle authentication using WebAuthn credentials
+        async function authenticate() {
+            try {
+                // Retrieve the stored credential from IndexedDB
+                await initDB();
+                const transaction = db.transaction(['credentials'], 'readonly');
                 const store = transaction.objectStore('credentials');
-                const request = store.add({ username: username, password: password });
+                const request = store.getAll();
 
                 request.onerror = (event) => {
-                    alert('Error saving credentials: ' + event.target.error.message);
+                    console.error('Error retrieving stored credential:', event.target.error);
+                    displayError('Error retrieving stored credential');
                 };
 
-                request.onsuccess = () => {
-                    alert('Credentials saved successfully.');
+                request.onsuccess = (event) => {
+                    const storedCredentials = event.target.result;
+                    if (!storedCredentials || storedCredentials.length === 0) {
+                        console.error('No stored credential found.');
+                        displayError('No stored credential found.');
+                        return;
+                    }
+
+                    const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+
+                    // Generate a random challenge
+                    const challenge = new Uint8Array(32);
+
+                    // Create PublicKeyCredentialRequestOptions
+                    const publicKeyCredentialRequestOptions = {
+                        challenge: challenge,
+                        userVerification: 'required'
+                    };
+
+                    // Get credentials for authentication
+                    navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
+                        .then((credential) => {
+                            // Handle the authentication process
+                            console.log('Authentication successful:', credential);
+                            displayError('Authentication successful');
+                        })
+                        .catch((error) => {
+                            console.error('Error during WebAuthn authentication:', error);
+                            displayError('Error during WebAuthn authentication: ' + error.message);
+                        });
                 };
             } catch (error) {
-                console.error('Error saving credentials:', error);
+                console.error('Error retrieving stored credential:', error);
+                displayError('Error retrieving stored credential: ' + error.message);
             }
         }
 
-
-        // Function to retrieve and display stored credentials
-async function displayCredentials() {
-    try{
-        await initDB();
-    // Open a transaction on the IndexedDB database
-    const transaction = db.transaction(['credentials'], 'readonly');
-    const store = transaction.objectStore('credentials');
-
-    // Open a cursor to iterate through stored credentials
-    const request = store.openCursor();
-
-    request.onerror = (event) => {
-        console.error('Error retrieving stored credentials:', event.target.error);
-    };
-
-    request.onsuccess = (event) => {
-        const cursor = event.target.result;
-        if (cursor) {
-            // Display each credential
-            const credential = cursor.value;
-            console.log('Stored Credential:', credential);
-            // Display the credential on the webpage, e.g., in a list
-            displayCredential(credential);
-            // Move to the next credential
-            cursor.continue();
-        } else {
-            console.log('All stored credentials retrieved.');
+        // Function to display error message on the web page
+        function displayError(message) {
+            document.getElementById('errorMessage').innerText = message;
         }
-    };
-} catch (error) {
-                console.error('Error display credentials:', error);
-            }
-}
 
-// Function to display a credential on the webpage
-function displayCredential(credential) {
-    const credentialList = document.getElementById('credentialList');
-    const listItem = document.createElement('li');
-    listItem.textContent = `Username: ${credential.username}, Password: ${credential.password}`;
-    //credentialList.appendChild(listItem);
-}
-
-
-
+        // Add event listeners to buttons
+        document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
+        document.getElementById('authenticateButton').addEventListener('click', authenticate);
     </script>
 </body>
 </html>
