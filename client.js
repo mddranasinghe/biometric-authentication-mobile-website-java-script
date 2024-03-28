@@ -1,4 +1,5 @@
-/*<!DOCTYPE html>
+/*
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,7 +15,6 @@
     <h2>Authentication</h2>
     <button id="authenticateButton">Authenticate</button>
 
-    <!-- Error message display area -->
     <div id="errorMessage" style="color: red;"></div>
 
     <script>
@@ -52,7 +52,7 @@
         }
 
         // Function to handle authentication using WebAuthn credentials
-        async function authenticate() {
+    async function authenticate() {
     try {
         // Retrieve the stored credential from localStorage
         const storedCredentialJSON = localStorage.getItem('webauthnCredential');
@@ -65,6 +65,14 @@
             console.log('Stored Credential:', storedCredential);
             displayError('Stored Credential: ' + JSON.stringify(storedCredential));
         }
+
+        // Parse the stored credential fields if needed
+        const decodedCredential = {
+            id: storedCredential.id,
+            attestationObject: storedCredential.attestationObject,
+            clientDataJSON: storedCredential.clientDataJSON
+            // Add other fields as needed
+        };
 
         // Generate a random challenge
         const challenge = new Uint8Array(32);
