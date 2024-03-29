@@ -74,6 +74,7 @@
         const credential = await navigator.credentials.create({
           publicKey: publicKeyCredentialCreationOptions
         });
+
         await initDB();
         // Store the credential in IndexedDB
         await storeCredential(credential);
@@ -81,8 +82,9 @@
                        
         console.log('Credential stored null:', credential);
         displayError('Credential stored null -',credential);
-                        return;
-                    }
+        return;
+          }
+          else if((credential || credential.length > 0)){    displayError('Credential stored done -',credential);}
 
       } catch (error) {
         console.error('Error storing credential:', error);
