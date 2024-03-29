@@ -19,7 +19,7 @@
   <script>
     // Initialize IndexedDB
     let db;
-    const id1='dinuka';
+
     async function initDB() {
       return new Promise((resolve, reject) => {
         const request = window.indexedDB.open('WebAuthnDB', 1);
@@ -65,7 +65,7 @@
         const publicKeyCredentialCreationOptions = {
           challenge: new Uint8Array(32),
           rp: { name: 'WebAuthn Demo' },
-          user: { id: id1, name: 'u', displayName: 'user' },
+          user: { id: 'd', name: 'u', displayName: 'user' },
           pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
           timeout: 60000
         };
@@ -121,12 +121,31 @@
       const challenge = new Uint8Array(32);
 
       // Create PublicKeyCredentialRequestOptions with allowCredentials
-      const publicKeyCredentialRequestOptions = {
+     /* const publicKeyCredentialRequestOptions = {
         challenge: challenge,
         userVerification: 'required',
-        allowCredentials:id1// Extract only the id property
-  
-      };
+        allowCredentials: [
+    { id: storedCredential.id } // Extract only the id property
+  ]
+      };*/
+
+      if (typeof storedCredential.id === 'string') {
+  const encoder = new TextEncoder();
+  const encodedId = encoder.encode(storedCredential.id);
+  const publicKeyCredentialRequestOptions = {
+    challenge: challenge,
+    userVerification: 'required',
+    allowCredentials: [{ id: encodedId }]
+  };
+} else {
+  // Use storedCredential.id directly if it's already an ArrayBuffer or Uint8Array
+  const publicKeyCredentialRequestOptions = {
+    challenge: challenge,
+    userVerification: 'required',
+    allowCredentials: [{ id: storedCredential.id }]
+  };
+}
+
 
       // Get credentials for authentication
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
