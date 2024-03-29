@@ -114,8 +114,8 @@
       }
 
       displayError('Stored Credentials:', storedCredentials);
-      displayError('id'+ storedCredential.id)
-     // const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+      displayError('id'+ storedCredential.id);
+     const storedCredential = storedCredentials[0]; // Assuming only one credential stored
 
       // Generate a random challenge
       const challenge = new Uint8Array(32);
