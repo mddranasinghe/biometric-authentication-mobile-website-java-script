@@ -61,32 +61,49 @@
 }
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
-            try {
-            
-                const publicKeyCredentialCreationOptions = {
-                    challenge: new Uint8Array(32),
-                    rp: { name: 'WebAuthn Demo' },
-                    user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
-                    pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-                    timeout: 60000
-                };
+    try {
+        const publicKeyCredentialCreationOptions = {
+            challenge: new Uint8Array(32),
+            rp: { name: 'WebAuthn Demo' },
+            user: { id: new Uint8Array(16), name: 'u', displayName: 'user' },
+            pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+            timeout: 60000
+        };
 
-                // Register credentials with WebAuthn
-                const credential = await navigator.credentials.create({
-                    publicKey: publicKeyCredentialCreationOptions
-                });
+        // Convert publicKeyCredentialCreationOptions to a JSON string
+        const publicKeyCredentialCreationOptionsJSON = JSON.stringify(publicKeyCredentialCreationOptions);
 
-                // Store the credential in IndexedDB
-                await initDB();
-                await storeCredential(credential);
+        // Initialize IndexedDB
+        await initDB();
 
-                console.log('Credential stored successfully:', credential);
-                displayError('Credential stored successfully',credential);
-            } catch (error) {
-                console.error('Error storing credential:', error);
-                displayError('Error storing credential: ' + error.message);
-            }
-        }
+        // Store publicKeyCredentialCreationOptionsJSON in IndexedDB
+        const transaction = db.transaction(['options'], 'readwrite');
+        const store = transaction.objectStore('options');
+        const request = store.put(publicKeyCredentialCreationOptionsJSON, 'publicKeyOptions');
+
+        request.onerror = (event) => {
+            console.error('Error storing publicKeyCredentialCreationOptions:', event.target.error);
+        };
+
+        request.onsuccess = () => {
+            console.log('publicKeyCredentialCreationOptions stored successfully.');
+        };
+
+        // Register credentials with WebAuthn
+        const credential = await navigator.credentials.create({
+            publicKey: publicKeyCredentialCreationOptions
+        });
+
+        // Store the credential in IndexedDB
+        await storeCredential(credential);
+
+        console.log('Credential stored successfully:', credential);
+        displayError('Credential stored successfully :-',credential);
+    } catch (error) {
+        console.error('Error storing credential:', error);
+        displayError('Error storing credential: ' + error.message);
+    }
+}
 
         // Function to handle authentication using WebAuthn credentials
         async function authenticate() {
