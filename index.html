@@ -12,13 +12,13 @@
   <button id="registerButton">Register Credentials</button>
 
   <h2>Authentication</h2>
-  <button id="authenticateButton">Authenticate</button>
+  <button id="authenticateButton" >Authenticate</button>
 
   <div id="errorMessage" style="color: red;"></div>
-
+ <a href="webauthn-js-demo-master\public\index.html">go</a>
   <script>
     // Initialize IndexedDB
-    let db;
+  /*  let db;
     const id = 'dinuka'; // Assuming you want to allow this specific credential
 
 const encoder = new TextEncoder();
@@ -120,24 +120,23 @@ const encodedId = encoder.encode(id);
 
       displayError('Stored Credentials:', storedCredentials);
 
-      //const storedCredential = storedCredentials[0]; // Assuming only one credential stored
-      const encoder = new TextEncoder();
-  const encodedId = encoder.encode(storedCredentials.id);
+      const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+
       // Generate a random challenge
-      const challenge1 = new Uint8Array(32);
+      const challenge = new Uint8Array(32);
 
       // Create PublicKeyCredentialRequestOptions with allowCredentials
-     const publicKeyCredentialRequestOptions = {
-        challenge: challenge1,
+     /* const publicKeyCredentialRequestOptions = {
+        challenge: challenge,
         userVerification: 'required',
         allowCredentials: [
-    { id: encodedId, type: 'public-key'  } // Extract only the id property
+    { id: storedCredential.id } // Extract only the id property
   ]
-      };
+      };*/
 
-     /* if (typeof storedCredentials.id === 'string') {
+      /*if (typeof storedCredential.id === 'string') {
   const encoder = new TextEncoder();
-  const encodedId = encoder.encode(storedCredentials.id);
+  const encodedId = encoder.encode(storedCredential.id);
   const publicKeyCredentialRequestOptions = {
     challenge: challenge,
     userVerification: 'required',
@@ -148,14 +147,14 @@ const encodedId = encoder.encode(id);
   const publicKeyCredentialRequestOptions = {
     challenge: challenge,
     userVerification: 'required',
-    allowCredentials: [{ id: storedCredentials.id }]
+    allowCredentials: [{ id: storedCredential.id }]
   };
-}*/
+}
       // Get credentials for authentication
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
         .then((assertion) => {
           // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
-          verifySignature(assertion, allowCredentials.type, challenge)
+          verifySignature(assertion, storedCredential.id, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
               displayError('Authentication successful', assertion);
@@ -185,7 +184,7 @@ function displayError(message) {
         }
         // Add event listeners to buttons
         document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
-        document.getElementById('authenticateButton').addEventListener('click', authenticate);
+        document.getElementById('authenticateButton').addEventListener('click', authenticate);*/
     </script>
 </body>
 </html>
