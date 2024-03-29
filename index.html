@@ -124,9 +124,7 @@
       const publicKeyCredentialRequestOptions = {
         challenge: challenge,
         userVerification: 'required',
-        allowCredentials: [
-    { id: storedCredential.id } 
-  ]
+       // allowCredentials: [{ id: storedCredential.id } ]
       };
 
       // Get credentials for authentication
