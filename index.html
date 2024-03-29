@@ -62,7 +62,7 @@
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
             try {
-                // Generate PublicKeyCredentialCreationOptions for registration
+            
                 const publicKeyCredentialCreationOptions = {
                     challenge: new Uint8Array(32),
                     rp: { name: 'WebAuthn Demo' },
@@ -81,7 +81,7 @@
                 await storeCredential(credential);
 
                 console.log('Credential stored successfully:', credential);
-                displayError('Credential stored successfully');
+                displayError('Credential stored successfully',credential);
             } catch (error) {
                 console.error('Error storing credential:', error);
                 displayError('Error storing credential: ' + error.message);
