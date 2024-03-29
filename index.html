@@ -155,7 +155,7 @@ const encodedId = encoder.encode(id);
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
         .then((assertion) => {
           // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
-          verifySignature(assertion, allowCredentials, challenge)
+          verifySignature(assertion, allowCredentials.type, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
               displayError('Authentication successful', assertion);
