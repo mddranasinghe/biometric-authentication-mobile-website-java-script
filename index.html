@@ -115,7 +115,7 @@
 
       displayError('Stored Credentials:', storedCredentials);
 
-      const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+     // const storedCredential = storedCredentials[0]; // Assuming only one credential stored
 
       // Generate a random challenge
       const challenge = new Uint8Array(32);
@@ -124,7 +124,7 @@
       const publicKeyCredentialRequestOptions = {
         challenge: challenge,
         userVerification: 'required',
-       allowCredentials: [{ id: storedCredential.id } ]
+       allowCredentials: [{ id: storedCredential.id }]
       };
 
       // Get credentials for authentication
