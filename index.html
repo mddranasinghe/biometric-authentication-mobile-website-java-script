@@ -131,7 +131,7 @@ const encodedId = encoder.encode(id);
         challenge: challenge,
         userVerification: 'required',
         allowCredentials: [
-    { id: encodedId } // Extract only the id property
+    { id: encodedId, type: 'public-key'  } // Extract only the id property
   ]
       };
 
