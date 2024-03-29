@@ -121,7 +121,8 @@ const encodedId = encoder.encode(id);
       displayError('Stored Credentials:', storedCredentials);
 
       //const storedCredential = storedCredentials[0]; // Assuming only one credential stored
-
+      const encoder = new TextEncoder();
+  const encodedId = encoder.encode(storedCredentials.id);
       // Generate a random challenge
       const challenge = new Uint8Array(32);
 
@@ -130,7 +131,7 @@ const encodedId = encoder.encode(id);
         challenge: challenge,
         userVerification: 'required',
         allowCredentials: [
-    { id: storedCredentials.id } // Extract only the id property
+    { id: encodedId } // Extract only the id property
   ]
       };
 
@@ -154,7 +155,7 @@ const encodedId = encoder.encode(id);
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
         .then((assertion) => {
           // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
-          verifySignature(assertion, storedCredentials.id, challenge)
+          verifySignature(assertion, encodedId, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
               displayError('Authentication successful', assertion);
