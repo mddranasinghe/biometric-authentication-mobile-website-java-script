@@ -74,7 +74,7 @@
         const credential = await navigator.credentials.create({
           publicKey: publicKeyCredentialCreationOptions
         });
-
+        await initDB();
         // Store the credential in IndexedDB
         await storeCredential(credential);
 
