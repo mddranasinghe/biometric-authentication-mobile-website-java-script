@@ -124,11 +124,11 @@ const encodedId = encoder.encode(id);
       const encoder = new TextEncoder();
   const encodedId = encoder.encode(storedCredentials.id);
       // Generate a random challenge
-      const challenge = new Uint8Array(32);
+      const challenge1 = new Uint8Array(32);
 
       // Create PublicKeyCredentialRequestOptions with allowCredentials
      const publicKeyCredentialRequestOptions = {
-        challenge: challenge,
+        challenge: challenge1,
         userVerification: 'required',
         allowCredentials: [
     { id: encodedId, type: 'public-key'  } // Extract only the id property
@@ -155,7 +155,7 @@ const encodedId = encoder.encode(id);
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
         .then((assertion) => {
           // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
-          verifySignature(assertion, encodedId, challenge)
+          verifySignature(assertion, allowCredentials, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
               displayError('Authentication successful', assertion);
