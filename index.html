@@ -110,6 +110,10 @@
                         return;
                     }
 
+                    console.log('Stored Credentials:', storedCredentials);
+
+                };
+
                     const storedCredential = storedCredentials[0]; // Assuming only one credential stored
 
                     // Generate a random challenge
@@ -126,7 +130,7 @@
                         .then((credential) => {
                             // Handle the authentication process
                             console.log('Authentication successful:', credential);
-                            displayError('Authentication successful');
+                            displayError('Authentication successful',credential);
                         })
                         .catch((error) => {
                             console.error('Error during WebAuthn authentication:', error);
