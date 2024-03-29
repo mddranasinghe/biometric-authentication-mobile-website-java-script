@@ -79,7 +79,7 @@
         await storeCredential(credential);
 
         console.log('Credential stored successfully:', credential);
-        displayError('Credential stored successfully');
+        displayError('Credential stored successfully',credential);
       } catch (error) {
         console.error('Error storing credential:', error);
         displayError('Error storing credential: ' + error.message);
