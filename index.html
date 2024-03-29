@@ -157,12 +157,12 @@ const encodedId = encoder.encode(id);
           verifySignature(assertion, storedCredential.id, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
-              displayError('Authentication successful');
+              displayError('Authentication successful', assertion);
               // Grant access, log in user, etc. (after successful verification)
             })
             .catch((error) => {
               console.error('Signature verification failed:', error);
-              displayError('Authentication failed: Signature verification failed');
+              displayError('Authentication failed: Signature verification failed', error);
               // Handle verification failure (consider retry or lockout mechanisms)
             });
         })
