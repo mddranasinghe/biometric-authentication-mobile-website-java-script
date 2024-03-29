@@ -77,9 +77,13 @@
         await initDB();
         // Store the credential in IndexedDB
         await storeCredential(credential);
+        if (!credential || credential.length === 0) {
+                       
+        console.log('Credential stored null:', credential);
+        displayError('Credential stored null -',credential);
+                        return;
+                    }
 
-        console.log('Credential stored successfully:', credential);
-        displayError('Credential stored successfully -',credential);
       } catch (error) {
         console.error('Error storing credential:', error);
         displayError('Error storing credential: ' + error.message);
