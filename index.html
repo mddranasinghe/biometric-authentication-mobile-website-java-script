@@ -34,15 +34,19 @@
                 };
 
                 request.onupgradeneeded = (event) => {
-                    const db = event.target.result;
-                    const store = db.createObjectStore('credentials', { keyPath: 'id' });
-                    store.createIndex('credentialIndex', 'id', { unique: true });
-                };
+    const db = event.target.result;
+    const credentialsStore = db.createObjectStore('credentials', { keyPath: 'id' });
+    credentialsStore.createIndex('credentialIndex', 'id', { unique: true });
+
+    const optionsStore = db.createObjectStore('options', { keyPath: 'key' }); // Create 'options' object store
+    optionsStore.add({ key: 'publicKeyOptions', value: publicKeyCredentialCreationOptionsJSON }); // Store the data
+};
+
             });
         }
 
         // Function to store credentials in IndexedDB
-        async function storeCredential(credential) {
+     /*   async function storeCredential(credential) {
     // Extract necessary data from the PublicKeyCredential object
     const publicKeyCredential = {
         id: credential.id,
@@ -52,13 +56,13 @@
             attestationObject: Array.from(new Uint8Array(credential.response.attestationObject)),
             clientDataJSON: Array.from(new Uint8Array(credential.response.clientDataJSON))
         }
-    };
+    };*/
 
     // Store the extracted data in IndexedDB
-    const transaction = db.transaction(['credentials'], 'readwrite');
+   /* const transaction = db.transaction(['credentials'], 'readwrite');
     const store = transaction.objectStore('credentials');
-    store.add(publicKeyCredential);
-}
+    store.add(publicKeyCredential);*/
+//}
         // Function to handle registration and storage of WebAuthn credentials
         async function registerAndStoreCredentials() {
     try {
