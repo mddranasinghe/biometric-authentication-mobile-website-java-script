@@ -84,7 +84,7 @@
         displayError('Credential stored null -',credential);
         return;
           }
-          else if((credential || credential.length > 0)){    displayError('Credential stored done -',credential);}
+          else if((credential || credential.length > 0)){displayError('Credential stored done -',credential);}
 
       } catch (error) {
         console.error('Error storing credential:', error);
@@ -124,11 +124,12 @@
                     // Create PublicKeyCredentialRequestOptions
                     const publicKeyCredentialRequestOptions = {
                         challenge: challenge,
-                        userVerification: 'required'
+                        userVerification: 'required',
+                        allowCredentials: [storedCredential]
                     };
 
                     // Get credentials for authentication
-                    navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
+                  const assertion= navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
                         .then((credential) => {
                             // Handle the authentication process
                             console.log('Authentication successful:', credential);
