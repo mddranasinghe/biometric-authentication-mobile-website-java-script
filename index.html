@@ -114,8 +114,8 @@
       }
 
       displayError('Stored Credentials:', storedCredentials);
-      //displayError('id'+ storedCredential.id);
-     const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+
+      const storedCredential = storedCredentials[0]; // Assuming only one credential stored
 
       // Generate a random challenge
       const challenge = new Uint8Array(32);
@@ -124,7 +124,9 @@
       const publicKeyCredentialRequestOptions = {
         challenge: challenge,
         userVerification: 'required',
-       allowCredentials: [{ id: storedCredential.id }]
+        allowCredentials: [
+    { id: storedCredential.id } // Extract only the id property
+  ]
       };
 
       // Get credentials for authentication
@@ -154,9 +156,7 @@
     displayError('Error retrieving stored credential: ' + error.message);
   }
 }
-function displayError(message) {
-            document.getElementById('errorMessage').innerText = message;
-        }
+
         // Add event listeners to buttons
         document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
         document.getElementById('authenticateButton').addEventListener('click', authenticate);
