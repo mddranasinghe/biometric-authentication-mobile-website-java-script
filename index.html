@@ -150,13 +150,11 @@ const encodedId = encoder.encode(id);
     allowCredentials: [{ id: storedCredential.id }]
   };
 }
-
-
       // Get credentials for authentication
       navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
         .then((assertion) => {
           // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
-          verifySignature(assertion, storedCredential, challenge)
+          verifySignature(assertion, storedCredential.id, challenge)
             .then(() => {
               console.log('Authentication successful:', assertion);
               displayError('Authentication successful');
