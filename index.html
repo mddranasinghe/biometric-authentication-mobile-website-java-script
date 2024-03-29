@@ -19,7 +19,7 @@
     <script>
         // Initialize IndexedDB
         let db;
-
+        
         async function initDB() {
             return new Promise((resolve, reject) => {
                 const request = window.indexedDB.open('WebAuthnDB', 1);
@@ -35,12 +35,12 @@
 
                request.onupgradeneeded = (event) => {
     const db = event.target.result;
-   // const credentialsStore = db.createObjectStore('credentials', { keyPath: 'id' });
-   // credentialsStore.createIndex('credentialIndex', 'id', { unique: true });
+     const credentialsStore = db.createObjectStore('options', { keyPath: 'id' });
+     credentialsStore.createIndex('publicKeyOptions', 'id', { unique: true });
 
-    const optionsStore = db.createObjectStore('options', { keyPath: 'key' }); // Create 'options' object store
-    optionsStore.add({ key: 'publicKeyOptions', value: publicKeyCredentialCreationOptionsJSON }); // Store the data
-};
+    //const optionsStore = db.createObjectStore('options', { keyPath: 'key' }); // Create 'options' object store
+    //optionsStore.add({ key: 'publicKeyOptions', value: publicKeyCredentialCreationOptionsJSON }); // Store the data
+    };
 
             });
         }
