@@ -92,64 +92,68 @@
       }
     }
 
-        // Function to handle authentication using WebAuthn credentials
-        async function authenticate() {
-            try {
-                // Retrieve the stored credential from IndexedDB
-                await initDB();
-                const transaction = db.transaction(['credentials'], 'readonly');
-                const store = transaction.objectStore('credentials');
-                const request = store.getAll();
+    async function authenticate() {
+  try {
+    // Retrieve the stored credential from IndexedDB
+    await initDB();
+    const transaction = db.transaction(['credentials'], 'readonly');
+    const store = transaction.objectStore('credentials');
+    const request = store.getAll();
 
-                request.onerror = (event) => {
-                    console.error('Error retrieving stored credential:', event.target.error);
-                    displayError('Error retrieving stored credential');
-                };
+    request.onerror = (event) => {
+      console.error('Error retrieving stored credential:', event.target.error);
+      displayError('Error retrieving stored credential');
+    };
 
-                request.onsuccess = (event) => {
-                    const storedCredentials = event.target.result;
-                    if (!storedCredentials || storedCredentials.length === 0) {
-                        console.error('No stored credential found.');
-                        displayError('No stored credential found.');
-                        return;
-                    }
+    request.onsuccess = (event) => {
+      const storedCredentials = event.target.result;
+      if (!storedCredentials || storedCredentials.length === 0) {
+        console.error('No stored credential found.');
+        displayError('No stored credential found.');
+        return;
+      }
 
-                    displayError('Stored Credentials:', storedCredentials);
+      displayError('Stored Credentials:', storedCredentials);
 
-                    const storedCredential = storedCredentials[0]; // Assuming only one credential stored
+      const storedCredential = storedCredentials[0]; // Assuming only one credential stored
 
-                    // Generate a random challenge
-                    const challenge = new Uint8Array(32);
+      // Generate a random challenge
+      const challenge = new Uint8Array(32);
 
-                    // Create PublicKeyCredentialRequestOptions
-                    const publicKeyCredentialRequestOptions = {
-                        challenge: challenge,
-                        userVerification: 'required',
-                        allowCredentials: [storedCredential]
-                    };
+      // Create PublicKeyCredentialRequestOptions with allowCredentials
+      const publicKeyCredentialRequestOptions = {
+        challenge: challenge,
+        userVerification: 'required',
+        allowCredentials: [storedCredential]
+      };
 
-                    // Get credentials for authentication
-                  const assertion= navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
-                        .then((credential) => {
-                            // Handle the authentication process
-                            console.log('Authentication successful:', credential);
-                            displayError('Authentication successful',credential);
-                        })
-                        .catch((error) => {
-                            console.error('Error during WebAuthn authentication:', error);
-                            displayError('Error during WebAuthn authentication: ' + error.message);
-                        });
-                };
-            } catch (error) {
-                console.error('Error retrieving stored credential:', error);
-                displayError('Error retrieving stored credential: ' + error.message);
-            }
-        }
-
-        // Function to display error message on the web page
-        function displayError(message) {
-            document.getElementById('errorMessage').innerText = message;
-        }
+      // Get credentials for authentication
+      navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions })
+        .then((assertion) => {
+          // Verify signature using assertion.response.data, storedCredential.publickey, and challenge
+          verifySignature(assertion, storedCredential, challenge)
+            .then(() => {
+              console.log('Authentication successful:', assertion);
+              displayError('Authentication successful');
+              // Grant access, log in user, etc. (after successful verification)
+            })
+            .catch((error) => {
+              console.error('Signature verification failed:', error);
+              displayError('Authentication failed: Signature verification failed');
+              // Handle verification failure (consider retry or lockout mechanisms)
+            });
+        })
+        .catch((error) => {
+          console.error('Error during WebAuthn authentication:', error);
+          displayError('Error during WebAuthn authentication: ' + error.message);
+          // Handle other authentication errors (e.g., user cancellation)
+        });
+    };
+  } catch (error) {
+    console.error('Error retrieving stored credential:', error);
+    displayError('Error retrieving stored credential: ' + error.message);
+  }
+}
 
         // Add event listeners to buttons
         document.getElementById('registerButton').addEventListener('click', registerAndStoreCredentials);
